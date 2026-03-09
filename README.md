@@ -33,11 +33,11 @@ React Dashboard (:5173) → FastAPI Backend (:8000) → LangGraph Agent
 ### Prerequisites
 
 | Tool | Version | Install |
-|------|---------|---------|
+|------|---------|---------| 
 | **Python** | 3.10+ | [python.org](https://python.org) |
 | **Node.js** | 18+ | [nodejs.org](https://nodejs.org) |
-| **Docker** | Latest | [docker.com](https://docker.com) |
 | **Git** | Latest | [git-scm.com](https://git-scm.com) |
+| **Docker** | *(Optional)* | Only needed if running Qdrant locally |
 
 ### Step 1: Clone the Repository
 
@@ -46,15 +46,24 @@ git clone https://github.com/Sandipanassasign/Knowledge-Base-Trainer-Agent.git
 cd Knowledge-Base-Trainer-Agent
 ```
 
-### Step 2: Start Qdrant (Vector Database)
+### Step 2: Setup Qdrant (Vector Database)
 
-Open a **new terminal** and run:
+Choose **one** of the two options:
+
+#### Option A: Qdrant Cloud ☁️ (Recommended — No Docker needed)
+
+1. Go to **[cloud.qdrant.io](https://cloud.qdrant.io)** and sign up (free, no credit card)
+2. Click **"Create Cluster"** → choose the **Free tier**
+3. Once ready, copy your **Cluster URL** and **API Key** from the dashboard
+4. You'll paste these into your `.env` file in Step 3
+
+#### Option B: Local Docker 🐳 (If Docker is available)
 
 ```bash
 docker run -p 6333:6333 qdrant/qdrant
 ```
 
-> Keep this terminal running. Qdrant will be available at `http://localhost:6333`
+> Keep this terminal running. Qdrant will be at `http://localhost:6333`
 
 ### Step 3: Setup the Backend
 
@@ -79,9 +88,18 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Now **edit the `.env` file** and add your OpenAI API key:
+Now **edit the `.env` file** and configure:
 
-```
+```env
+# If using Qdrant Cloud (Option A):
+QDRANT_URL=https://your-cluster-id.cloud.qdrant.io:6333
+QDRANT_API_KEY=your-qdrant-api-key
+
+# If using local Docker (Option B):
+# QDRANT_URL=http://localhost:6333
+# QDRANT_API_KEY=
+
+# OpenAI (required)
 OPENAI_API_KEY=sk-your-actual-key-here
 ```
 
