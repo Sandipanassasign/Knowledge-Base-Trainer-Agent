@@ -33,7 +33,7 @@ class DefectRecord(BaseModel):
 
 
 class DefectPayload(BaseModel):
-    """Payload stored alongside the vector in Qdrant."""
+    """Payload stored alongside the vector in ChromaDB."""
     title: str
     description: str
     severity: str

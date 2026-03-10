@@ -5,7 +5,7 @@ Provides data for the Risk Heatmap and dashboard visualizations.
 from collections import Counter
 from fastapi import APIRouter, HTTPException
 from models import AnalyticsResponse, ModuleRisk
-from qdrant_store import QdrantStore
+from chroma_store import VectorStore
 
 router = APIRouter(prefix="/api", tags=["Analytics"])
 
@@ -17,7 +17,7 @@ async def get_analytics():
     Returns module risks, severity distribution, and feedback stats.
     """
     try:
-        store = QdrantStore()
+        store = VectorStore()
         payloads = store.get_all_points_payload()
 
         if not payloads:

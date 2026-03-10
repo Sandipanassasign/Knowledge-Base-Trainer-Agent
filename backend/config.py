@@ -7,10 +7,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ── Qdrant Configuration ──
-QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
-QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", None)
-QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "defect_knowledge_base")
+# ── ChromaDB Configuration ──
+CHROMA_PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", "./chroma_data")
+CHROMA_COLLECTION = os.getenv("CHROMA_COLLECTION", "defect_knowledge_base")
 
 # ── LLM Configuration ──
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")

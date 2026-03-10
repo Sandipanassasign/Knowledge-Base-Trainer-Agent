@@ -4,7 +4,7 @@ Step 3: The Feedback Loop (The Trainer).
 """
 from fastapi import APIRouter, HTTPException
 from models import FeedbackRequest, FeedbackResponse, FeedbackType
-from qdrant_store import QdrantStore
+from chroma_store import VectorStore
 
 router = APIRouter(prefix="/api", tags=["Feedback"])
 
@@ -28,12 +28,12 @@ async def submit_feedback(request: FeedbackRequest):
     Step 3: Human-in-the-Loop Feedback.
 
     - If 'correct': The agent's recommendation is validated. Confidence is boosted.
-    - If 'incorrect': The agent saves the user's correction back into Qdrant
+    - If 'incorrect': The agent saves the user's correction back into ChromaDB
       as a 'High-Confidence Reference' — self-correction loop.
     """
     try:
         session = get_session(request.session_id)
-        store = QdrantStore()
+        store = VectorStore()
 
         if request.feedback_type == FeedbackType.CORRECT:
             # Positive feedback — optionally boost confidence of matched records
@@ -50,7 +50,7 @@ async def submit_feedback(request: FeedbackRequest):
                     detail="Correction text is required when feedback type is 'incorrect'.",
                 )
 
-            # Step 3: Upsert corrected knowledge back into Qdrant
+            # Step 3: Upsert corrected knowledge back into ChromaDB
             original_query = session.get("query", request.session_id)
             point_id = store.upsert_feedback(
                 original_query=original_query,

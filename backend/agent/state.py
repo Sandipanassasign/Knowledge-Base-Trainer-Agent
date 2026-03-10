@@ -16,7 +16,7 @@ class AgentState(TypedDict):
     code_changes: Optional[str]         # Current code changes for predictive analysis
 
     # ── Processing ──
-    historical_context: List[Dict[str, Any]]  # Retrieved similar cases from Qdrant
+    historical_context: List[Dict[str, Any]]  # Retrieved similar cases from ChromaDB
     patterns: List[str]                       # Identified trends / commonalities
     recommendation: str                       # Final strategic output
 

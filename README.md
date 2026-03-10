@@ -2,7 +2,7 @@
 
 An end-to-end **Agentic AI Defect Knowledge Intelligence (DKI) Assurance Platform** that transforms a static knowledge base into a dynamic, reasoning "brain" for Quality Engineering teams.
 
-Built with **LangGraph** for orchestration, **Qdrant** for hybrid vector memory, **FastAPI** for the API layer, and a **React** dashboard for visualization.
+Built with **LangGraph** for orchestration, **ChromaDB** for local hybrid vector memory, **FastAPI** for the API layer, and a **React** dashboard for visualization.
 
 ---
 
@@ -10,17 +10,17 @@ Built with **LangGraph** for orchestration, **Qdrant** for hybrid vector memory,
 
 ```
 React Dashboard (:5173) → FastAPI Backend (:8000) → LangGraph Agent
-                                                      ├── Retriever Node → Qdrant (Hybrid Search)
+                                                      ├── Retriever Node → ChromaDB (Hybrid Search)
                                                       ├── Pattern Recognition Node → LLM
                                                       ├── Predictive Node → LLM (BDD Scenarios)
-                                                      └── Feedback Loop → Qdrant (Self-Learning)
+                                                      └── Feedback Loop → ChromaDB (Self-Learning)
 ```
 
 ## 🎯 Features
 
 | Step | Feature | Description |
 |------|---------|-------------|
-| 1 | **Hybrid Memory** | Qdrant vector DB with semantic search + metadata filtering |
+| 1 | **Hybrid Memory** | ChromaDB local vector DB with semantic search + metadata filtering |
 | 2 | **Agentic Workflow** | LangGraph with Retriever → Pattern Recognition → Predictive nodes |
 | 3 | **Self-Learning** | Human-in-the-loop feedback saves corrections as High-Confidence References |
 | 4 | **Predictive Guidance** | Predicts risky modules & generates BDD Gherkin test scenarios |
@@ -37,7 +37,6 @@ React Dashboard (:5173) → FastAPI Backend (:8000) → LangGraph Agent
 | **Python** | 3.10+ | [python.org](https://python.org) |
 | **Node.js** | 18+ | [nodejs.org](https://nodejs.org) |
 | **Git** | Latest | [git-scm.com](https://git-scm.com) |
-| **Docker** | *(Optional)* | Only needed if running Qdrant locally |
 
 ### Step 1: Clone the Repository
 
@@ -46,26 +45,7 @@ git clone https://github.com/Sandipanassasign/Knowledge-Base-Trainer-Agent.git
 cd Knowledge-Base-Trainer-Agent
 ```
 
-### Step 2: Setup Qdrant (Vector Database)
-
-Choose **one** of the two options:
-
-#### Option A: Qdrant Cloud ☁️ (Recommended — No Docker needed)
-
-1. Go to **[cloud.qdrant.io](https://cloud.qdrant.io)** and sign up (free, no credit card)
-2. Click **"Create Cluster"** → choose the **Free tier**
-3. Once ready, copy your **Cluster URL** and **API Key** from the dashboard
-4. You'll paste these into your `.env` file in Step 3
-
-#### Option B: Local Docker 🐳 (If Docker is available)
-
-```bash
-docker run -p 6333:6333 qdrant/qdrant
-```
-
-> Keep this terminal running. Qdrant will be at `http://localhost:6333`
-
-### Step 3: Setup the Backend
+### Step 2: Setup the Backend
 
 Open a **new terminal**:
 
@@ -88,22 +68,20 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Now **edit the `.env` file** and configure:
+Now **edit the `.env` file** and add your OpenAI key:
 
 ```env
-# If using Qdrant Cloud (Option A):
-QDRANT_URL=https://your-cluster-id.cloud.qdrant.io:6333
-QDRANT_API_KEY=your-qdrant-api-key
-
-# If using local Docker (Option B):
-# QDRANT_URL=http://localhost:6333
-# QDRANT_API_KEY=
+# ChromaDB stores data locally — no setup needed!
+CHROMA_PERSIST_DIR=./chroma_data
+CHROMA_COLLECTION=defect_knowledge_base
 
 # OpenAI (required)
 OPENAI_API_KEY=sk-your-actual-key-here
 ```
 
-### Step 4: Start the Backend Server
+> **Note:** ChromaDB runs fully locally — no Docker, no cloud service, no API key needed for the vector database.
+
+### Step 3: Start the Backend Server
 
 ```bash
 # Still in the backend/ directory with venv activated
@@ -113,7 +91,7 @@ python main.py
 > Backend starts at `http://localhost:8000`  
 > Swagger docs at `http://localhost:8000/docs`
 
-### Step 5: Seed the Knowledge Base
+### Step 4: Seed the Knowledge Base
 
 Open a **new terminal**:
 
@@ -123,9 +101,9 @@ source venv/bin/activate   # Activate venv again in this terminal
 python seed_data.py
 ```
 
-> This loads 15 sample defect records into Qdrant.
+> This loads 15 sample defect records into ChromaDB.
 
-### Step 6: Setup & Start the Frontend
+### Step 5: Setup & Start the Frontend
 
 Open a **new terminal**:
 
@@ -141,7 +119,7 @@ npm run dev
 
 > Frontend starts at `http://localhost:5173`
 
-### Step 7: Open the Dashboard
+### Step 6: Open the Dashboard
 
 Open your browser and go to: **http://localhost:5173**
 
@@ -166,7 +144,7 @@ Open your browser and go to: **http://localhost:5173**
 |-------|-----------|
 | Orchestration | LangGraph (Python) |
 | LLM | GPT-4o-mini (configurable) |
-| Vector DB | Qdrant (Hybrid Search) |
+| Vector DB | ChromaDB (Local Hybrid Search) |
 | Embeddings | all-MiniLM-L6-v2 (384D) |
 | API | FastAPI + Uvicorn |
 | Frontend | React + Vite |
@@ -185,7 +163,7 @@ Knowledge-Base-Trainer-Agent/
 │   ├── config.py             # Configuration loader
 │   ├── main.py               # FastAPI application
 │   ├── models.py             # Pydantic request/response models
-│   ├── qdrant_store.py       # Qdrant client & hybrid search
+│   ├── chroma_store.py       # ChromaDB client & hybrid search
 │   ├── seed_data.py          # Sample defect data seeder
 │   ├── agent/
 │   │   ├── state.py          # AgentState TypedDict

@@ -5,6 +5,7 @@ __pycache__/
 .env
 venv/
 .venv/
+chroma_data/
 
 # Node
 frontend/node_modules/

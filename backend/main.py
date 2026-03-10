@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from config import APP_TITLE, APP_VERSION
 from routers import query, feedback, analytics
 from models import DefectRecord
-from qdrant_store import QdrantStore
+from chroma_store import VectorStore
 
 app = FastAPI(
     title=APP_TITLE,
@@ -51,7 +51,7 @@ async def root():
 @app.post("/api/ingest", tags=["Data Ingestion"])
 async def ingest_defect(defect: DefectRecord):
     """Ingest a single defect record into the knowledge base."""
-    store = QdrantStore()
+    store = VectorStore()
     point_id = store.ingest_defect(defect)
     return {"message": "Defect ingested successfully", "point_id": point_id}
 

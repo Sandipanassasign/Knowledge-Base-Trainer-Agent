@@ -1,6 +1,6 @@
 """
 Step 2 & 4: Agent Nodes — The functions that do the work.
-  - Retriever Node:  Calls Qdrant for top-K similar defects (hybrid search).
+  - Retriever Node:  Calls ChromaDB for top-K similar defects (hybrid search).
   - Pattern Recognition Node:  LLM analyzes results to find commonalities.
   - Predictive Node:  Matches current changes against patterns to flag risk areas.
 """
@@ -38,13 +38,13 @@ def _get_llm() -> ChatOpenAI:
 # ═══════════════════════════════════════════════
 def retriever_node(state: AgentState) -> Dict[str, Any]:
     """
-    Calls Qdrant to find the top 5 similar historical defects.
+    Calls ChromaDB to find the top 5 similar historical defects.
     Uses hybrid search — semantic + optional metadata filters.
     """
     # Import here to avoid circular imports at module level
-    from qdrant_store import QdrantStore
+    from chroma_store import VectorStore
 
-    store = QdrantStore()
+    store = VectorStore()
     results = store.search(
         query=state["query"],
         module_filter=state.get("module_filter"),

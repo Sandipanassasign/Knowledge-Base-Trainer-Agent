@@ -3,7 +3,7 @@ Seed Data — Sample defect records to populate the knowledge base.
 Run: python seed_data.py
 """
 from models import DefectRecord, Severity
-from qdrant_store import QdrantStore
+from chroma_store import VectorStore
 
 
 SAMPLE_DEFECTS = [
@@ -161,12 +161,12 @@ SAMPLE_DEFECTS = [
 
 
 def seed_database():
-    """Seed the Qdrant database with sample defect data."""
+    """Seed the ChromaDB database with sample defect data."""
     print("🌱 Seeding the DKI knowledge base...")
-    store = QdrantStore()
+    store = VectorStore()
     ids = store.ingest_batch(SAMPLE_DEFECTS)
     print(f"✅ Successfully ingested {len(ids)} defect records.")
-    print(f"   Collection: {store.client.get_collection('defect_knowledge_base').points_count} total points.")
+    print(f"   Collection: {store.collection.count()} total points.")
     return ids
 
 
